@@ -1,0 +1,95 @@
+In the application layer, there is a Blazor WebAssembly UI, and after a user logs in, 
+I need to capture their user and user claims and pass those values to the domain layer,
+where I have specification classes that require these values to perform queries.
+we could use the Context Object to accomplish this, we could use the Context Object to capture the user and user claims
+after the user logs in, and then pass those values to the domain layer in a clean and efficient way.
+1-Define a Context Object interface in the Application layer that includes methods for user authentication and authorization, 
+as well as methods for accessing user claims. For example:
+public interface IContext
+{
+    bool AuthenticateUser(string username, string password);
+    bool AuthorizeUser(string username, string permission);
+    IEnumerable<string> GetUserClaims(string username);
+}
+2-Implement the Context Object interface in the Infrastructure layer, 
+using a concrete implementation that interacts with your authentication
+and authorization mechanisms (such as ASP.NET Identity). 
+For example:
+public class AspNetContext : IContext
+{
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    public AspNetContext(IHttpContextAccessor httpContextAccessor)
+    {
+        _httpContextAccessor = httpContextAccessor;
+    }
+    public bool AuthenticateUser(string username, string password)
+    {
+    }
+    public bool AuthorizeUser(string username, string permission)
+    {
+    }
+    public IEnumerable<string> GetUserClaims(string username)
+    {
+        return _httpContextAccessor.HttpContext.User.Claims.Select(c => c.Value);
+    }
+}
+3-Inject the Context Object into your Blazor components and use it to authenticate the user, 
+authorize the user, and access the user's claims as needed. 
+For example:
+@inject IContext Context
+@code {
+    private bool _authenticated;
+    private async Task AuthenticateUser(string username, string password)
+    {
+        _authenticated = Context.AuthenticateUser(username, password);
+    }
+    private bool IsAuthorized(string permission)
+    {
+        return Context.AuthorizeUser(User.Identity.Name, permission);
+    }
+    private IEnumerable<string> GetUserClaims()
+    {
+        return Context.GetUserClaims(User.Identity.Name);
+    }
+}
+4-Pass the user and user claims to the domain layer by injecting the 
+Context Object into your domain services and using it to retrieve the necessary values. For example:
+public class MyDomainService
+{
+    private readonly IContext _context;
+    public MyDomainService(IContext context)
+    {
+        _context = context;
+    }
+    public void MyMethod()
+    {
+        string username = User.Identity.Name;
+        bool isAuthorized = _context.AuthorizeUser(username, "my-permission");
+        IEnumerable<string> userClaims = _context.GetUserClaims(username);
+    }
+}
+Step 4 involves passing the user id and claims from the application layer to the domain layer.
+Given that our application has both a Blazor WebAssembly UI and a clean minimal API layer with API controllers,
+the cleanest way to do this would be to use the MediatR library to define a pipeline behavior that intercepts
+API requests and injects the user id and claims into the specification classes in the domain layer.
+Here's how you can implement this:
+Define a TenantContext object in the application layer that contains the user id and claims.
+This object should be populated during the user authentication process and be made available to the MediatR pipeline.
+Use MediatR to define a pipeline behavior that intercepts API requests before they reach the API controllers.
+This behavior should take the TenantContext object as a parameter.
+Inside the pipeline behavior, extract the user id and claims from the TenantContext object.
+Use these values to create a new Tenant object that contains the user id and claims.
+This object should be passed as a parameter to the specification classes in the domain layer.
+Finally, use the Tenant object in the specification classes to perform queries
+and other operations that require the user id and claims.
+By implementing this approach, you can ensure that the user id and claims are properly
+propagated from the application layer to the domain layer, while keeping the domain layer
+decoupled from the application layer. Additionally, the use of the MediatR pipeline allows
+you to easily add additional behaviors in the future, such as caching or logging,
+without having to modify the API controllers themselves.
+First, define the TenantContext object in the application layer:
+public class TenantContext
+{
+    public int UserId { get; set; }
+    public IList<Claim> Claims { get; set; }
+}

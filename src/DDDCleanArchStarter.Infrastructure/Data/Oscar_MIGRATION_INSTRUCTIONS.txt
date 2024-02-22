@@ -1,0 +1,1 @@
+//--RUN THIS FROM DDDCleanArchStarter.Api project folder   << ---------
