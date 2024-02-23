@@ -1,6 +1,7 @@
 using System;
 using BlazorShared.Models;
 using DDDInvoicingClean.Domain.ModelsDto;
+
 namespace BlazorMauiShared.Models.PhoneNumberType
 {
     public class DeletePhoneNumberTypeResponse : BaseResponse
@@ -9,6 +10,7 @@ namespace BlazorMauiShared.Models.PhoneNumberType
             : base(correlationId)
         {
         }
+
         public DeletePhoneNumberTypeResponse()
         {
         }

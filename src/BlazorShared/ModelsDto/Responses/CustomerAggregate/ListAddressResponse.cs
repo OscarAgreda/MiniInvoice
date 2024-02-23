@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using BlazorShared.Models;
 using DDDInvoicingClean.Domain.ModelsDto;
+
 namespace BlazorMauiShared.Models.Address
 {
     public class ListAddressResponse : BaseResponse
@@ -10,9 +11,11 @@ namespace BlazorMauiShared.Models.Address
             : base(correlationId)
         {
         }
+
         public ListAddressResponse()
         {
         }
+
         public List<AddressDto> Addresses { get; set; } = new();
         public int Count { get; set; }
     }

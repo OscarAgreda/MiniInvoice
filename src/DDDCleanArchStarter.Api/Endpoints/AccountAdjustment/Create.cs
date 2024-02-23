@@ -1,19 +1,17 @@
 using System;
 using System.Globalization;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using AutoMapper;
 using BlazorMauiShared.Models.AccountAdjustment;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Swashbuckle.AspNetCore.Annotations;
+using DDDCleanArchStarter.Infrastructure.Services;
 using DDDInvoicingClean.Domain.Entities;
 using DDDInvoicingClean.Domain.ModelsDto;
-using DDDCleanArchStarter.Infrastructure.Services;
-using DDDInvoicingClean.Domain.Specifications;
 using DDDInvoicingCleanL.SharedKernel.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
+
 namespace DDDInvoicingClean.Api.AccountAdjustmentEndpoints
 {
     public class Create : EndpointBaseAsync.WithRequest<CreateAccountAdjustmentRequest>.WithActionResult<
@@ -22,6 +20,7 @@ namespace DDDInvoicingClean.Api.AccountAdjustmentEndpoints
         private readonly IAppLoggerService<Create> _logger;
         private readonly IMapper _mapper;
         private readonly IRepository<AccountAdjustment> _repository;
+
         public Create(
             IRepository<AccountAdjustment> repository,
             IMapper mapper,
@@ -32,6 +31,7 @@ namespace DDDInvoicingClean.Api.AccountAdjustmentEndpoints
             _logger = logger;
             _repository = repository;
         }
+
         [HttpPost("api/accountAdjustments")]
         [SwaggerOperation(
             Summary = "Creates a new AccountAdjustment",
@@ -58,7 +58,7 @@ namespace DDDInvoicingClean.Api.AccountAdjustmentEndpoints
                 var dto = _mapper.Map<AccountAdjustmentDto>(newAccountAdjustment);
                 response.AccountAdjustment = dto;
             }
-            catch (Exception ex)  
+            catch (Exception ex)
             {
                 var errorMsg = $"Error while creating accountAdjustment with Id {newAccountAdjustment.AccountAdjustmentId.ToString("D", CultureInfo.InvariantCulture)}";
                 _logger.LogError(ex, errorMsg);

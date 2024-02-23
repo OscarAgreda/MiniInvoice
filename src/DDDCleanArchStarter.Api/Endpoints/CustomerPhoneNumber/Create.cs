@@ -1,19 +1,17 @@
 using System;
 using System.Globalization;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using AutoMapper;
 using BlazorMauiShared.Models.CustomerPhoneNumber;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Swashbuckle.AspNetCore.Annotations;
+using DDDCleanArchStarter.Infrastructure.Services;
 using DDDInvoicingClean.Domain.Entities;
 using DDDInvoicingClean.Domain.ModelsDto;
-using DDDCleanArchStarter.Infrastructure.Services;
-using DDDInvoicingClean.Domain.Specifications;
 using DDDInvoicingCleanL.SharedKernel.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
+
 namespace DDDInvoicingClean.Api.CustomerPhoneNumberEndpoints
 {
     public class Create : EndpointBaseAsync.WithRequest<CreateCustomerPhoneNumberRequest>.WithActionResult<
@@ -22,6 +20,7 @@ namespace DDDInvoicingClean.Api.CustomerPhoneNumberEndpoints
         private readonly IAppLoggerService<Create> _logger;
         private readonly IMapper _mapper;
         private readonly IRepository<CustomerPhoneNumber> _repository;
+
         public Create(
             IRepository<CustomerPhoneNumber> repository,
             IMapper mapper,
@@ -32,6 +31,7 @@ namespace DDDInvoicingClean.Api.CustomerPhoneNumberEndpoints
             _logger = logger;
             _repository = repository;
         }
+
         [HttpPost("api/customerPhoneNumbers")]
         [SwaggerOperation(
             Summary = "Creates a new CustomerPhoneNumber",
@@ -56,7 +56,7 @@ namespace DDDInvoicingClean.Api.CustomerPhoneNumberEndpoints
                 var dto = _mapper.Map<CustomerPhoneNumberDto>(newCustomerPhoneNumber);
                 response.CustomerPhoneNumber = dto;
             }
-            catch (Exception ex)  
+            catch (Exception ex)
             {
                 var errorMsg = $"Error while creating customerPhoneNumber with Id {newCustomerPhoneNumber.RowId.ToString("D", CultureInfo.InvariantCulture)}";
                 _logger.LogError(ex, errorMsg);

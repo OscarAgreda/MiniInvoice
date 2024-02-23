@@ -1,41 +1,42 @@
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using AutoMapper;
 using BlazorMauiShared.Models.Product;
+using DDDCleanArchStarter.Infrastructure.Services;
+using DDDInvoicingClean.Domain.Entities;
+using DDDInvoicingClean.Domain.Specifications;
+using DDDInvoicingCleanL.SharedKernel.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using DDDInvoicingClean.Domain.Entities;
-using DDDInvoicingClean.Domain.ModelsDto;
-using DDDInvoicingClean.Domain.Specifications;
-using DDDCleanArchStarter.Infrastructure.Services;
-using DDDInvoicingCleanL.SharedKernel.Interfaces;
+
 namespace DDDInvoicingClean.Api.ProductEndpoints
 {
     public class Delete : EndpointBaseAsync.WithRequest<DeleteProductRequest>.WithActionResult<
         DeleteProductResponse>
     {
-        private readonly IAppLoggerService<Delete> _logger;
-        private readonly IRepository<Product> _productReadRepository;
         private readonly IRepository<InvoiceDetail> _invoiceDetailRepository;
-        private readonly IRepository<ProductCategory> _productCategoryRepository;
+        private readonly IAppLoggerService<Delete> _logger;
         private readonly IMapper _mapper;
+        private readonly IRepository<ProductCategory> _productCategoryRepository;
+        private readonly IRepository<Product> _productReadRepository;
         private readonly IRepository<Product> _repository;
+
         public Delete(IRepository<Product> ProductRepository, IRepository<Product> ProductReadRepository,
             IAppLoggerService<Delete> logger,
-		       IRepository<InvoiceDetail> invoiceDetailRepository,
-		       IRepository<ProductCategory> productCategoryRepository,
+               IRepository<InvoiceDetail> invoiceDetailRepository,
+               IRepository<ProductCategory> productCategoryRepository,
             IMapper mapper)
         {
             _repository = ProductRepository;
             _logger = logger;
             _productReadRepository = ProductReadRepository;
-			    _invoiceDetailRepository = invoiceDetailRepository;
-			    _productCategoryRepository = productCategoryRepository;
+            _invoiceDetailRepository = invoiceDetailRepository;
+            _productCategoryRepository = productCategoryRepository;
             _mapper = mapper;
         }
+
         [HttpDelete("api/products/{ProductId}")]
         [SwaggerOperation(
             Summary = "Deletes an Product",
@@ -50,10 +51,10 @@ namespace DDDInvoicingClean.Api.ProductEndpoints
             var product = await _productReadRepository.GetByIdAsync(request.ProductId, cancellationToken);
             if (product == null)
             {
-                    var errorMsg = $"Product with ID {request.ProductId} not found.";
-                    _logger.LogWarning(errorMsg);
-                    response.ErrorMessage = errorMsg;
-                    return NotFound(response);
+                var errorMsg = $"Product with ID {request.ProductId} not found.";
+                _logger.LogWarning(errorMsg);
+                response.ErrorMessage = errorMsg;
+                return NotFound(response);
             }
             var invoiceDetailSpec = new GetInvoiceDetailWithProductKeySpec(product.ProductId);
             var invoiceDetails = await _invoiceDetailRepository.ListAsync(invoiceDetailSpec);

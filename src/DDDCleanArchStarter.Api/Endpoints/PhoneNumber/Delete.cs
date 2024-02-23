@@ -1,38 +1,39 @@
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using AutoMapper;
 using BlazorMauiShared.Models.PhoneNumber;
+using DDDCleanArchStarter.Infrastructure.Services;
+using DDDInvoicingClean.Domain.Entities;
+using DDDInvoicingClean.Domain.Specifications;
+using DDDInvoicingCleanL.SharedKernel.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using DDDInvoicingClean.Domain.Entities;
-using DDDInvoicingClean.Domain.ModelsDto;
-using DDDInvoicingClean.Domain.Specifications;
-using DDDCleanArchStarter.Infrastructure.Services;
-using DDDInvoicingCleanL.SharedKernel.Interfaces;
+
 namespace DDDInvoicingClean.Api.PhoneNumberEndpoints
 {
     public class Delete : EndpointBaseAsync.WithRequest<DeletePhoneNumberRequest>.WithActionResult<
         DeletePhoneNumberResponse>
     {
-        private readonly IAppLoggerService<Delete> _logger;
-        private readonly IRepository<PhoneNumber> _phoneNumberReadRepository;
         private readonly IRepository<CustomerPhoneNumber> _customerPhoneNumberRepository;
+        private readonly IAppLoggerService<Delete> _logger;
         private readonly IMapper _mapper;
+        private readonly IRepository<PhoneNumber> _phoneNumberReadRepository;
         private readonly IRepository<PhoneNumber> _repository;
+
         public Delete(IRepository<PhoneNumber> PhoneNumberRepository, IRepository<PhoneNumber> PhoneNumberReadRepository,
             IAppLoggerService<Delete> logger,
-		       IRepository<CustomerPhoneNumber> customerPhoneNumberRepository,
+               IRepository<CustomerPhoneNumber> customerPhoneNumberRepository,
             IMapper mapper)
         {
             _repository = PhoneNumberRepository;
             _logger = logger;
             _phoneNumberReadRepository = PhoneNumberReadRepository;
-			    _customerPhoneNumberRepository = customerPhoneNumberRepository;
+            _customerPhoneNumberRepository = customerPhoneNumberRepository;
             _mapper = mapper;
         }
+
         [HttpDelete("api/phoneNumbers/{PhoneNumberId}")]
         [SwaggerOperation(
             Summary = "Deletes an PhoneNumber",
@@ -47,10 +48,10 @@ namespace DDDInvoicingClean.Api.PhoneNumberEndpoints
             var phoneNumber = await _phoneNumberReadRepository.GetByIdAsync(request.PhoneNumberId, cancellationToken);
             if (phoneNumber == null)
             {
-                    var errorMsg = $"PhoneNumber with ID {request.PhoneNumberId} not found.";
-                    _logger.LogWarning(errorMsg);
-                    response.ErrorMessage = errorMsg;
-                    return NotFound(response);
+                var errorMsg = $"PhoneNumber with ID {request.PhoneNumberId} not found.";
+                _logger.LogWarning(errorMsg);
+                response.ErrorMessage = errorMsg;
+                return NotFound(response);
             }
             var customerPhoneNumberSpec = new GetCustomerPhoneNumberWithPhoneNumberKeySpec(phoneNumber.PhoneNumberId);
             var customerPhoneNumbers = await _customerPhoneNumberRepository.ListAsync(customerPhoneNumberSpec);

@@ -6,46 +6,49 @@ using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using AutoMapper;
 using BlazorMauiShared.Models.PhoneNumberType;
-using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
+using DDDCleanArchStarter.Infrastructure.Services;
 using DDDInvoicingClean.Domain.Entities;
 using DDDInvoicingClean.Domain.ModelsDto;
 using DDDInvoicingClean.Domain.Specifications;
-using DDDCleanArchStarter.Infrastructure.Services;
 using DDDInvoicingCleanL.SharedKernel.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
+
 namespace DDDInvoicingClean.Api.PhoneNumberTypeEndpoints
 {
-  public class List : EndpointBaseAsync
-    .WithRequest<ListPhoneNumberTypeRequest>
-    .WithActionResult<ListPhoneNumberTypeResponse>
-  {
-    private readonly IRepository<PhoneNumberType> _repository;
-    private readonly IMapper _mapper;
+    public class List : EndpointBaseAsync
+      .WithRequest<ListPhoneNumberTypeRequest>
+      .WithActionResult<ListPhoneNumberTypeResponse>
+    {
         private readonly IAppLoggerService<List> _logger;
-    public List(IRepository<PhoneNumberType> repository,
+        private readonly IMapper _mapper;
+        private readonly IRepository<PhoneNumberType> _repository;
+
+        public List(IRepository<PhoneNumberType> repository,
       IAppLoggerService<List> logger,
       IMapper mapper)
-    {
-      _repository = repository;
-      _mapper = mapper;
-      _logger = logger;
-    }
-    [HttpGet("api/phoneNumberTypes")]
-    [SwaggerOperation(
-        Summary = "List PhoneNumberTypes",
-        Description = "List PhoneNumberTypes",
-        OperationId = "phoneNumberTypes.List",
-        Tags = new[] { "PhoneNumberTypeEndpoints" })
-    ]
-    public override async Task<ActionResult<ListPhoneNumberTypeResponse>> HandleAsync([FromQuery] ListPhoneNumberTypeRequest request,
-      CancellationToken cancellationToken)
-    {
-      var response = new ListPhoneNumberTypeResponse(request.CorrelationId());
+        {
+            _repository = repository;
+            _mapper = mapper;
+            _logger = logger;
+        }
+
+        [HttpGet("api/phoneNumberTypes")]
+        [SwaggerOperation(
+            Summary = "List PhoneNumberTypes",
+            Description = "List PhoneNumberTypes",
+            OperationId = "phoneNumberTypes.List",
+            Tags = new[] { "PhoneNumberTypeEndpoints" })
+        ]
+        public override async Task<ActionResult<ListPhoneNumberTypeResponse>> HandleAsync([FromQuery] ListPhoneNumberTypeRequest request,
+          CancellationToken cancellationToken)
+        {
+            var response = new ListPhoneNumberTypeResponse(request.CorrelationId());
             try
             {
                 var spec = new PhoneNumberTypeGetListSpec();
                 var phoneNumberTypes = await _repository.ListAsync(spec, cancellationToken);
-                if (phoneNumberTypes == null || !phoneNumberTypes.Any()) 
+                if (phoneNumberTypes == null || !phoneNumberTypes.Any())
                 {
                     _logger.LogWarning("No phoneNumberTypes found.");
                     return NotFound();
@@ -60,7 +63,7 @@ namespace DDDInvoicingClean.Api.PhoneNumberTypeEndpoints
                 response.ErrorMessage = errorMsg;
                 return BadRequest(response);
             }
-      return Ok(response);
+            return Ok(response);
+        }
     }
-  }
 }

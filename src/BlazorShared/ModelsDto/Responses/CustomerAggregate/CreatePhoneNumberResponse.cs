@@ -1,6 +1,7 @@
 using System;
 using BlazorShared.Models;
 using DDDInvoicingClean.Domain.ModelsDto;
+
 namespace BlazorMauiShared.Models.PhoneNumber
 {
     public class CreatePhoneNumberResponse : BaseResponse
@@ -9,9 +10,11 @@ namespace BlazorMauiShared.Models.PhoneNumber
             : base(correlationId)
         {
         }
+
         public CreatePhoneNumberResponse()
         {
         }
+
         public PhoneNumberDto PhoneNumber { get; set; } = new();
     }
 }

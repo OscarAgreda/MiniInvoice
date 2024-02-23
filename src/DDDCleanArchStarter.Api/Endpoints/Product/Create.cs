@@ -1,19 +1,17 @@
 using System;
 using System.Globalization;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using AutoMapper;
 using BlazorMauiShared.Models.Product;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Swashbuckle.AspNetCore.Annotations;
+using DDDCleanArchStarter.Infrastructure.Services;
 using DDDInvoicingClean.Domain.Entities;
 using DDDInvoicingClean.Domain.ModelsDto;
-using DDDCleanArchStarter.Infrastructure.Services;
-using DDDInvoicingClean.Domain.Specifications;
 using DDDInvoicingCleanL.SharedKernel.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
+
 namespace DDDInvoicingClean.Api.ProductEndpoints
 {
     public class Create : EndpointBaseAsync.WithRequest<CreateProductRequest>.WithActionResult<
@@ -22,6 +20,7 @@ namespace DDDInvoicingClean.Api.ProductEndpoints
         private readonly IAppLoggerService<Create> _logger;
         private readonly IMapper _mapper;
         private readonly IRepository<Product> _repository;
+
         public Create(
             IRepository<Product> repository,
             IMapper mapper,
@@ -32,6 +31,7 @@ namespace DDDInvoicingClean.Api.ProductEndpoints
             _logger = logger;
             _repository = repository;
         }
+
         [HttpPost("api/products")]
         [SwaggerOperation(
             Summary = "Creates a new Product",
@@ -63,7 +63,7 @@ namespace DDDInvoicingClean.Api.ProductEndpoints
                 var dto = _mapper.Map<ProductDto>(newProduct);
                 response.Product = dto;
             }
-            catch (Exception ex)  
+            catch (Exception ex)
             {
                 var errorMsg = $"Error while creating product with Id {newProduct.ProductId.ToString("D", CultureInfo.InvariantCulture)}";
                 _logger.LogError(ex, errorMsg);

@@ -6,46 +6,49 @@ using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using AutoMapper;
 using BlazorMauiShared.Models.Product;
-using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
+using DDDCleanArchStarter.Infrastructure.Services;
 using DDDInvoicingClean.Domain.Entities;
 using DDDInvoicingClean.Domain.ModelsDto;
 using DDDInvoicingClean.Domain.Specifications;
-using DDDCleanArchStarter.Infrastructure.Services;
 using DDDInvoicingCleanL.SharedKernel.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
+
 namespace DDDInvoicingClean.Api.ProductEndpoints
 {
-  public class List : EndpointBaseAsync
-    .WithRequest<ListProductRequest>
-    .WithActionResult<ListProductResponse>
-  {
-    private readonly IRepository<Product> _repository;
-    private readonly IMapper _mapper;
+    public class List : EndpointBaseAsync
+      .WithRequest<ListProductRequest>
+      .WithActionResult<ListProductResponse>
+    {
         private readonly IAppLoggerService<List> _logger;
-    public List(IRepository<Product> repository,
+        private readonly IMapper _mapper;
+        private readonly IRepository<Product> _repository;
+
+        public List(IRepository<Product> repository,
       IAppLoggerService<List> logger,
       IMapper mapper)
-    {
-      _repository = repository;
-      _mapper = mapper;
-      _logger = logger;
-    }
-    [HttpGet("api/products")]
-    [SwaggerOperation(
-        Summary = "List Products",
-        Description = "List Products",
-        OperationId = "products.List",
-        Tags = new[] { "ProductEndpoints" })
-    ]
-    public override async Task<ActionResult<ListProductResponse>> HandleAsync([FromQuery] ListProductRequest request,
-      CancellationToken cancellationToken)
-    {
-      var response = new ListProductResponse(request.CorrelationId());
+        {
+            _repository = repository;
+            _mapper = mapper;
+            _logger = logger;
+        }
+
+        [HttpGet("api/products")]
+        [SwaggerOperation(
+            Summary = "List Products",
+            Description = "List Products",
+            OperationId = "products.List",
+            Tags = new[] { "ProductEndpoints" })
+        ]
+        public override async Task<ActionResult<ListProductResponse>> HandleAsync([FromQuery] ListProductRequest request,
+          CancellationToken cancellationToken)
+        {
+            var response = new ListProductResponse(request.CorrelationId());
             try
             {
                 var spec = new ProductGetListSpec();
                 var products = await _repository.ListAsync(spec, cancellationToken);
-                if (products == null || !products.Any()) 
+                if (products == null || !products.Any())
                 {
                     _logger.LogWarning("No products found.");
                     return NotFound();
@@ -60,7 +63,7 @@ namespace DDDInvoicingClean.Api.ProductEndpoints
                 response.ErrorMessage = errorMsg;
                 return BadRequest(response);
             }
-      return Ok(response);
+            return Ok(response);
+        }
     }
-  }
 }

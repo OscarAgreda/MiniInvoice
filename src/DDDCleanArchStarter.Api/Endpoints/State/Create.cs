@@ -1,19 +1,17 @@
 using System;
 using System.Globalization;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using AutoMapper;
 using BlazorMauiShared.Models.State;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Swashbuckle.AspNetCore.Annotations;
+using DDDCleanArchStarter.Infrastructure.Services;
 using DDDInvoicingClean.Domain.Entities;
 using DDDInvoicingClean.Domain.ModelsDto;
-using DDDCleanArchStarter.Infrastructure.Services;
-using DDDInvoicingClean.Domain.Specifications;
 using DDDInvoicingCleanL.SharedKernel.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
+
 namespace DDDInvoicingClean.Api.StateEndpoints
 {
     public class Create : EndpointBaseAsync.WithRequest<CreateStateRequest>.WithActionResult<
@@ -22,6 +20,7 @@ namespace DDDInvoicingClean.Api.StateEndpoints
         private readonly IAppLoggerService<Create> _logger;
         private readonly IMapper _mapper;
         private readonly IRepository<State> _repository;
+
         public Create(
             IRepository<State> repository,
             IMapper mapper,
@@ -32,6 +31,7 @@ namespace DDDInvoicingClean.Api.StateEndpoints
             _logger = logger;
             _repository = repository;
         }
+
         [HttpPost("api/states")]
         [SwaggerOperation(
             Summary = "Creates a new State",
@@ -56,7 +56,7 @@ namespace DDDInvoicingClean.Api.StateEndpoints
                 var dto = _mapper.Map<StateDto>(newState);
                 response.State = dto;
             }
-            catch (Exception ex)  
+            catch (Exception ex)
             {
                 var errorMsg = $"Error while creating state with Id {newState.StateId.ToString("D", CultureInfo.InvariantCulture)}";
                 _logger.LogError(ex, errorMsg);

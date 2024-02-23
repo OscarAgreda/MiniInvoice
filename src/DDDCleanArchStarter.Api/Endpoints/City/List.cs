@@ -6,46 +6,49 @@ using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using AutoMapper;
 using BlazorMauiShared.Models.City;
-using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
+using DDDCleanArchStarter.Infrastructure.Services;
 using DDDInvoicingClean.Domain.Entities;
 using DDDInvoicingClean.Domain.ModelsDto;
 using DDDInvoicingClean.Domain.Specifications;
-using DDDCleanArchStarter.Infrastructure.Services;
 using DDDInvoicingCleanL.SharedKernel.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
+
 namespace DDDInvoicingClean.Api.CityEndpoints
 {
-  public class List : EndpointBaseAsync
-    .WithRequest<ListCityRequest>
-    .WithActionResult<ListCityResponse>
-  {
-    private readonly IRepository<City> _repository;
-    private readonly IMapper _mapper;
+    public class List : EndpointBaseAsync
+      .WithRequest<ListCityRequest>
+      .WithActionResult<ListCityResponse>
+    {
         private readonly IAppLoggerService<List> _logger;
-    public List(IRepository<City> repository,
+        private readonly IMapper _mapper;
+        private readonly IRepository<City> _repository;
+
+        public List(IRepository<City> repository,
       IAppLoggerService<List> logger,
       IMapper mapper)
-    {
-      _repository = repository;
-      _mapper = mapper;
-      _logger = logger;
-    }
-    [HttpGet("api/cities")]
-    [SwaggerOperation(
-        Summary = "List Cities",
-        Description = "List Cities",
-        OperationId = "cities.List",
-        Tags = new[] { "CityEndpoints" })
-    ]
-    public override async Task<ActionResult<ListCityResponse>> HandleAsync([FromQuery] ListCityRequest request,
-      CancellationToken cancellationToken)
-    {
-      var response = new ListCityResponse(request.CorrelationId());
+        {
+            _repository = repository;
+            _mapper = mapper;
+            _logger = logger;
+        }
+
+        [HttpGet("api/cities")]
+        [SwaggerOperation(
+            Summary = "List Cities",
+            Description = "List Cities",
+            OperationId = "cities.List",
+            Tags = new[] { "CityEndpoints" })
+        ]
+        public override async Task<ActionResult<ListCityResponse>> HandleAsync([FromQuery] ListCityRequest request,
+          CancellationToken cancellationToken)
+        {
+            var response = new ListCityResponse(request.CorrelationId());
             try
             {
                 var spec = new CityGetListSpec();
                 var cities = await _repository.ListAsync(spec, cancellationToken);
-                if (cities == null || !cities.Any()) 
+                if (cities == null || !cities.Any())
                 {
                     _logger.LogWarning("No cities found.");
                     return NotFound();
@@ -60,7 +63,7 @@ namespace DDDInvoicingClean.Api.CityEndpoints
                 response.ErrorMessage = errorMsg;
                 return BadRequest(response);
             }
-      return Ok(response);
+            return Ok(response);
+        }
     }
-  }
 }

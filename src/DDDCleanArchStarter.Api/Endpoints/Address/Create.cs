@@ -1,19 +1,17 @@
 using System;
 using System.Globalization;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using AutoMapper;
 using BlazorMauiShared.Models.Address;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Swashbuckle.AspNetCore.Annotations;
+using DDDCleanArchStarter.Infrastructure.Services;
 using DDDInvoicingClean.Domain.Entities;
 using DDDInvoicingClean.Domain.ModelsDto;
-using DDDCleanArchStarter.Infrastructure.Services;
-using DDDInvoicingClean.Domain.Specifications;
 using DDDInvoicingCleanL.SharedKernel.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
+
 namespace DDDInvoicingClean.Api.AddressEndpoints
 {
     public class Create : EndpointBaseAsync.WithRequest<CreateAddressRequest>.WithActionResult<
@@ -22,6 +20,7 @@ namespace DDDInvoicingClean.Api.AddressEndpoints
         private readonly IAppLoggerService<Create> _logger;
         private readonly IMapper _mapper;
         private readonly IRepository<Address> _repository;
+
         public Create(
             IRepository<Address> repository,
             IMapper mapper,
@@ -32,6 +31,7 @@ namespace DDDInvoicingClean.Api.AddressEndpoints
             _logger = logger;
             _repository = repository;
         }
+
         [HttpPost("api/addresses")]
         [SwaggerOperation(
             Summary = "Creates a new Address",
@@ -59,7 +59,7 @@ namespace DDDInvoicingClean.Api.AddressEndpoints
                 var dto = _mapper.Map<AddressDto>(newAddress);
                 response.Address = dto;
             }
-            catch (Exception ex)  
+            catch (Exception ex)
             {
                 var errorMsg = $"Error while creating address with Id {newAddress.AddressId.ToString("D", CultureInfo.InvariantCulture)}";
                 _logger.LogError(ex, errorMsg);

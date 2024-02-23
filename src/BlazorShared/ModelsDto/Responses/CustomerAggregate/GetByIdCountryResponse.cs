@@ -1,6 +1,7 @@
 using System;
 using BlazorShared.Models;
 using DDDInvoicingClean.Domain.ModelsDto;
+
 namespace BlazorMauiShared.Models.Country
 {
     public class GetByIdCountryResponse : BaseResponse
@@ -9,9 +10,11 @@ namespace BlazorMauiShared.Models.Country
             : base(correlationId)
         {
         }
+
         public GetByIdCountryResponse()
         {
         }
+
         public CountryDto Country { get; set; } = new();
     }
 }

@@ -1,6 +1,7 @@
 using System;
 using BlazorShared.Models;
 using DDDInvoicingClean.Domain.ModelsDto;
+
 namespace BlazorMauiShared.Models.City
 {
     public class UpdateCityResponse : BaseResponse
@@ -9,9 +10,11 @@ namespace BlazorMauiShared.Models.City
             : base(correlationId)
         {
         }
+
         public UpdateCityResponse()
         {
         }
+
         public CityDto City { get; set; } = new();
     }
 }

@@ -1,26 +1,25 @@
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using AutoMapper;
 using BlazorMauiShared.Models.AddressType;
+using DDDCleanArchStarter.Infrastructure.Services;
+using DDDInvoicingClean.Domain.Entities;
+using DDDInvoicingCleanL.SharedKernel.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using DDDInvoicingClean.Domain.Entities;
-using DDDInvoicingClean.Domain.ModelsDto;
-using DDDInvoicingClean.Domain.Specifications;
-using DDDCleanArchStarter.Infrastructure.Services;
-using DDDInvoicingCleanL.SharedKernel.Interfaces;
+
 namespace DDDInvoicingClean.Api.AddressTypeEndpoints
 {
     public class Delete : EndpointBaseAsync.WithRequest<DeleteAddressTypeRequest>.WithActionResult<
         DeleteAddressTypeResponse>
     {
-        private readonly IAppLoggerService<Delete> _logger;
         private readonly IRepository<AddressType> _addressTypeReadRepository;
+        private readonly IAppLoggerService<Delete> _logger;
         private readonly IMapper _mapper;
         private readonly IRepository<AddressType> _repository;
+
         public Delete(IRepository<AddressType> AddressTypeRepository, IRepository<AddressType> AddressTypeReadRepository,
             IAppLoggerService<Delete> logger,
             IMapper mapper)
@@ -30,6 +29,7 @@ namespace DDDInvoicingClean.Api.AddressTypeEndpoints
             _addressTypeReadRepository = AddressTypeReadRepository;
             _mapper = mapper;
         }
+
         [HttpDelete("api/addressTypes/{AddressTypeId}")]
         [SwaggerOperation(
             Summary = "Deletes an AddressType",
@@ -44,10 +44,10 @@ namespace DDDInvoicingClean.Api.AddressTypeEndpoints
             var addressType = await _addressTypeReadRepository.GetByIdAsync(request.AddressTypeId, cancellationToken);
             if (addressType == null)
             {
-                    var errorMsg = $"AddressType with ID {request.AddressTypeId} not found.";
-                    _logger.LogWarning(errorMsg);
-                    response.ErrorMessage = errorMsg;
-                    return NotFound(response);
+                var errorMsg = $"AddressType with ID {request.AddressTypeId} not found.";
+                _logger.LogWarning(errorMsg);
+                response.ErrorMessage = errorMsg;
+                return NotFound(response);
             }
             try
             {

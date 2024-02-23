@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using BlazorShared.Models;
 using DDDInvoicingClean.Domain.ModelsDto;
+
 namespace BlazorMauiShared.Models.CustomerPhoneNumber
 {
     public class ListCustomerPhoneNumberResponse : BaseResponse
@@ -10,10 +11,12 @@ namespace BlazorMauiShared.Models.CustomerPhoneNumber
             : base(correlationId)
         {
         }
+
         public ListCustomerPhoneNumberResponse()
         {
         }
-        public List<CustomerPhoneNumberDto> CustomerPhoneNumbers { get; set; } = new();
+
         public int Count { get; set; }
+        public List<CustomerPhoneNumberDto> CustomerPhoneNumbers { get; set; } = new();
     }
 }

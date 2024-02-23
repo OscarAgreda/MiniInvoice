@@ -1,6 +1,7 @@
 using System;
 using BlazorShared.Models;
 using DDDInvoicingClean.Domain.ModelsDto;
+
 namespace BlazorMauiShared.Models.Address
 {
     public class CreateAddressResponse : BaseResponse
@@ -9,9 +10,11 @@ namespace BlazorMauiShared.Models.Address
             : base(correlationId)
         {
         }
+
         public CreateAddressResponse()
         {
         }
+
         public AddressDto Address { get; set; } = new();
     }
 }

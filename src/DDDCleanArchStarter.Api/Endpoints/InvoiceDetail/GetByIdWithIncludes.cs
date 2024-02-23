@@ -1,26 +1,27 @@
 using System;
-using System.Linq;
-using Newtonsoft.Json;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using AutoMapper;
 using BlazorMauiShared.Models.InvoiceDetail;
-using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
+using DDDCleanArchStarter.Infrastructure.Services;
 using DDDInvoicingClean.Domain.Entities;
 using DDDInvoicingClean.Domain.ModelsDto;
 using DDDInvoicingClean.Domain.Specifications;
-using DDDCleanArchStarter.Infrastructure.Services;
 using DDDInvoicingCleanL.SharedKernel.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Swashbuckle.AspNetCore.Annotations;
+
 namespace DDDInvoicingClean.Api.InvoiceDetailEndpoints
 {
     public class GetByIdWithIncludes : EndpointBaseAsync.WithRequest<GetByIdInvoiceDetailRequest>.WithActionResult<
         GetByIdInvoiceDetailResponse>
     {
-        private readonly IMapper _mapper;
         private readonly IAppLoggerService<GetByIdWithIncludes> _logger;
+        private readonly IMapper _mapper;
         private readonly IRepository<InvoiceDetail> _repository;
+
         public GetByIdWithIncludes(
             IRepository<InvoiceDetail> repository,
             IAppLoggerService<GetByIdWithIncludes> logger,
@@ -30,6 +31,7 @@ namespace DDDInvoicingClean.Api.InvoiceDetailEndpoints
             _logger = logger;
             _mapper = mapper;
         }
+
         [HttpGet("api/invoiceDetails/i/{InvoiceDetailId}")]
         [SwaggerOperation(
             Summary = "Get a InvoiceDetail by Id With Includes",

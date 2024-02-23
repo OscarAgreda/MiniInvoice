@@ -1,25 +1,26 @@
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
-using Newtonsoft.Json;
 using AutoMapper;
 using BlazorMauiShared.Models.Address;
-using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
+using DDDCleanArchStarter.Infrastructure.Services;
 using DDDInvoicingClean.Domain.Entities;
 using DDDInvoicingClean.Domain.ModelsDto;
-using DDDCleanArchStarter.Infrastructure.Services;
 using DDDInvoicingCleanL.SharedKernel.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Swashbuckle.AspNetCore.Annotations;
+
 namespace DDDInvoicingClean.Api.AddressEndpoints
 {
     public class GetById : EndpointBaseAsync.WithRequest<GetByIdAddressRequest>.WithActionResult<
         GetByIdAddressResponse>
     {
-        private readonly IMapper _mapper;
         private readonly IAppLoggerService<GetById> _logger;
+        private readonly IMapper _mapper;
         private readonly IRepository<Address> _repository;
+
         public GetById(
             IRepository<Address> repository,
             IAppLoggerService<GetById> logger,
@@ -29,6 +30,7 @@ namespace DDDInvoicingClean.Api.AddressEndpoints
             _repository = repository;
             _mapper = mapper;
         }
+
         [HttpGet("api/addresses/{AddressId}")]
         [SwaggerOperation(
             Summary = "Get a Address by Id",

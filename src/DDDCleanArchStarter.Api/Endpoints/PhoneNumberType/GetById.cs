@@ -1,25 +1,26 @@
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
-using Newtonsoft.Json;
 using AutoMapper;
 using BlazorMauiShared.Models.PhoneNumberType;
-using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
+using DDDCleanArchStarter.Infrastructure.Services;
 using DDDInvoicingClean.Domain.Entities;
 using DDDInvoicingClean.Domain.ModelsDto;
-using DDDCleanArchStarter.Infrastructure.Services;
 using DDDInvoicingCleanL.SharedKernel.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Swashbuckle.AspNetCore.Annotations;
+
 namespace DDDInvoicingClean.Api.PhoneNumberTypeEndpoints
 {
     public class GetById : EndpointBaseAsync.WithRequest<GetByIdPhoneNumberTypeRequest>.WithActionResult<
         GetByIdPhoneNumberTypeResponse>
     {
-        private readonly IMapper _mapper;
         private readonly IAppLoggerService<GetById> _logger;
+        private readonly IMapper _mapper;
         private readonly IRepository<PhoneNumberType> _repository;
+
         public GetById(
             IRepository<PhoneNumberType> repository,
             IAppLoggerService<GetById> logger,
@@ -29,6 +30,7 @@ namespace DDDInvoicingClean.Api.PhoneNumberTypeEndpoints
             _repository = repository;
             _mapper = mapper;
         }
+
         [HttpGet("api/phoneNumberTypes/{PhoneNumberTypeId}")]
         [SwaggerOperation(
             Summary = "Get a PhoneNumberType by Id",

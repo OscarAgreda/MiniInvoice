@@ -1,25 +1,26 @@
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
-using Newtonsoft.Json;
 using AutoMapper;
 using BlazorMauiShared.Models.Country;
-using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
+using DDDCleanArchStarter.Infrastructure.Services;
 using DDDInvoicingClean.Domain.Entities;
 using DDDInvoicingClean.Domain.ModelsDto;
-using DDDCleanArchStarter.Infrastructure.Services;
 using DDDInvoicingCleanL.SharedKernel.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using Swashbuckle.AspNetCore.Annotations;
+
 namespace DDDInvoicingClean.Api.CountryEndpoints
 {
     public class GetById : EndpointBaseAsync.WithRequest<GetByIdCountryRequest>.WithActionResult<
         GetByIdCountryResponse>
     {
-        private readonly IMapper _mapper;
         private readonly IAppLoggerService<GetById> _logger;
+        private readonly IMapper _mapper;
         private readonly IRepository<Country> _repository;
+
         public GetById(
             IRepository<Country> repository,
             IAppLoggerService<GetById> logger,
@@ -29,6 +30,7 @@ namespace DDDInvoicingClean.Api.CountryEndpoints
             _repository = repository;
             _mapper = mapper;
         }
+
         [HttpGet("api/countries/{CountryId}")]
         [SwaggerOperation(
             Summary = "Get a Country by Id",

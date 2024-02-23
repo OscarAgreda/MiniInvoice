@@ -1,26 +1,25 @@
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using AutoMapper;
 using BlazorMauiShared.Models.AccountAdjustment;
+using DDDCleanArchStarter.Infrastructure.Services;
+using DDDInvoicingClean.Domain.Entities;
+using DDDInvoicingCleanL.SharedKernel.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using DDDInvoicingClean.Domain.Entities;
-using DDDInvoicingClean.Domain.ModelsDto;
-using DDDInvoicingClean.Domain.Specifications;
-using DDDCleanArchStarter.Infrastructure.Services;
-using DDDInvoicingCleanL.SharedKernel.Interfaces;
+
 namespace DDDInvoicingClean.Api.AccountAdjustmentEndpoints
 {
     public class Delete : EndpointBaseAsync.WithRequest<DeleteAccountAdjustmentRequest>.WithActionResult<
         DeleteAccountAdjustmentResponse>
     {
-        private readonly IAppLoggerService<Delete> _logger;
         private readonly IRepository<AccountAdjustment> _accountAdjustmentReadRepository;
+        private readonly IAppLoggerService<Delete> _logger;
         private readonly IMapper _mapper;
         private readonly IRepository<AccountAdjustment> _repository;
+
         public Delete(IRepository<AccountAdjustment> AccountAdjustmentRepository, IRepository<AccountAdjustment> AccountAdjustmentReadRepository,
             IAppLoggerService<Delete> logger,
             IMapper mapper)
@@ -30,6 +29,7 @@ namespace DDDInvoicingClean.Api.AccountAdjustmentEndpoints
             _accountAdjustmentReadRepository = AccountAdjustmentReadRepository;
             _mapper = mapper;
         }
+
         [HttpDelete("api/accountAdjustments/{AccountAdjustmentId}")]
         [SwaggerOperation(
             Summary = "Deletes an AccountAdjustment",
@@ -44,10 +44,10 @@ namespace DDDInvoicingClean.Api.AccountAdjustmentEndpoints
             var accountAdjustment = await _accountAdjustmentReadRepository.GetByIdAsync(request.AccountAdjustmentId, cancellationToken);
             if (accountAdjustment == null)
             {
-                    var errorMsg = $"AccountAdjustment with ID {request.AccountAdjustmentId} not found.";
-                    _logger.LogWarning(errorMsg);
-                    response.ErrorMessage = errorMsg;
-                    return NotFound(response);
+                var errorMsg = $"AccountAdjustment with ID {request.AccountAdjustmentId} not found.";
+                _logger.LogWarning(errorMsg);
+                response.ErrorMessage = errorMsg;
+                return NotFound(response);
             }
             try
             {

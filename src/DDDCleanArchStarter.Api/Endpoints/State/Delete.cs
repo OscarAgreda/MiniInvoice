@@ -1,41 +1,42 @@
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using AutoMapper;
 using BlazorMauiShared.Models.State;
+using DDDCleanArchStarter.Infrastructure.Services;
+using DDDInvoicingClean.Domain.Entities;
+using DDDInvoicingClean.Domain.Specifications;
+using DDDInvoicingCleanL.SharedKernel.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using DDDInvoicingClean.Domain.Entities;
-using DDDInvoicingClean.Domain.ModelsDto;
-using DDDInvoicingClean.Domain.Specifications;
-using DDDCleanArchStarter.Infrastructure.Services;
-using DDDInvoicingCleanL.SharedKernel.Interfaces;
+
 namespace DDDInvoicingClean.Api.StateEndpoints
 {
     public class Delete : EndpointBaseAsync.WithRequest<DeleteStateRequest>.WithActionResult<
         DeleteStateResponse>
     {
-        private readonly IAppLoggerService<Delete> _logger;
-        private readonly IRepository<State> _stateReadRepository;
         private readonly IRepository<Address> _addressRepository;
         private readonly IRepository<City> _cityRepository;
+        private readonly IAppLoggerService<Delete> _logger;
         private readonly IMapper _mapper;
         private readonly IRepository<State> _repository;
+        private readonly IRepository<State> _stateReadRepository;
+
         public Delete(IRepository<State> StateRepository, IRepository<State> StateReadRepository,
             IAppLoggerService<Delete> logger,
-		       IRepository<Address> addressRepository,
-		       IRepository<City> cityRepository,
+               IRepository<Address> addressRepository,
+               IRepository<City> cityRepository,
             IMapper mapper)
         {
             _repository = StateRepository;
             _logger = logger;
             _stateReadRepository = StateReadRepository;
-			    _addressRepository = addressRepository;
-			    _cityRepository = cityRepository;
+            _addressRepository = addressRepository;
+            _cityRepository = cityRepository;
             _mapper = mapper;
         }
+
         [HttpDelete("api/states/{StateId}")]
         [SwaggerOperation(
             Summary = "Deletes an State",
@@ -50,10 +51,10 @@ namespace DDDInvoicingClean.Api.StateEndpoints
             var state = await _stateReadRepository.GetByIdAsync(request.StateId, cancellationToken);
             if (state == null)
             {
-                    var errorMsg = $"State with ID {request.StateId} not found.";
-                    _logger.LogWarning(errorMsg);
-                    response.ErrorMessage = errorMsg;
-                    return NotFound(response);
+                var errorMsg = $"State with ID {request.StateId} not found.";
+                _logger.LogWarning(errorMsg);
+                response.ErrorMessage = errorMsg;
+                return NotFound(response);
             }
             var addressSpec = new GetAddressWithStateKeySpec(state.StateId);
             var addresses = await _addressRepository.ListAsync(addressSpec);

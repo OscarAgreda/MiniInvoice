@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using BlazorShared.Models;
 using DDDInvoicingClean.Domain.ModelsDto;
+
 namespace BlazorMauiShared.Models.InvoiceDetail
 {
     public class ListInvoiceDetailResponse : BaseResponse
@@ -10,10 +11,12 @@ namespace BlazorMauiShared.Models.InvoiceDetail
             : base(correlationId)
         {
         }
+
         public ListInvoiceDetailResponse()
         {
         }
-        public List<InvoiceDetailDto> InvoiceDetails { get; set; } = new();
+
         public int Count { get; set; }
+        public List<InvoiceDetailDto> InvoiceDetails { get; set; } = new();
     }
 }

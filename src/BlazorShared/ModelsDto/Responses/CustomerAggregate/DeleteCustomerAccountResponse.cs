@@ -1,6 +1,7 @@
 using System;
 using BlazorShared.Models;
 using DDDInvoicingClean.Domain.ModelsDto;
+
 namespace BlazorMauiShared.Models.CustomerAccount
 {
     public class DeleteCustomerAccountResponse : BaseResponse
@@ -9,6 +10,7 @@ namespace BlazorMauiShared.Models.CustomerAccount
             : base(correlationId)
         {
         }
+
         public DeleteCustomerAccountResponse()
         {
         }

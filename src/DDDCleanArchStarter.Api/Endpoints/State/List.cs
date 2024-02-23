@@ -6,46 +6,49 @@ using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using AutoMapper;
 using BlazorMauiShared.Models.State;
-using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
+using DDDCleanArchStarter.Infrastructure.Services;
 using DDDInvoicingClean.Domain.Entities;
 using DDDInvoicingClean.Domain.ModelsDto;
 using DDDInvoicingClean.Domain.Specifications;
-using DDDCleanArchStarter.Infrastructure.Services;
 using DDDInvoicingCleanL.SharedKernel.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
+
 namespace DDDInvoicingClean.Api.StateEndpoints
 {
-  public class List : EndpointBaseAsync
-    .WithRequest<ListStateRequest>
-    .WithActionResult<ListStateResponse>
-  {
-    private readonly IRepository<State> _repository;
-    private readonly IMapper _mapper;
+    public class List : EndpointBaseAsync
+      .WithRequest<ListStateRequest>
+      .WithActionResult<ListStateResponse>
+    {
         private readonly IAppLoggerService<List> _logger;
-    public List(IRepository<State> repository,
+        private readonly IMapper _mapper;
+        private readonly IRepository<State> _repository;
+
+        public List(IRepository<State> repository,
       IAppLoggerService<List> logger,
       IMapper mapper)
-    {
-      _repository = repository;
-      _mapper = mapper;
-      _logger = logger;
-    }
-    [HttpGet("api/states")]
-    [SwaggerOperation(
-        Summary = "List States",
-        Description = "List States",
-        OperationId = "states.List",
-        Tags = new[] { "StateEndpoints" })
-    ]
-    public override async Task<ActionResult<ListStateResponse>> HandleAsync([FromQuery] ListStateRequest request,
-      CancellationToken cancellationToken)
-    {
-      var response = new ListStateResponse(request.CorrelationId());
+        {
+            _repository = repository;
+            _mapper = mapper;
+            _logger = logger;
+        }
+
+        [HttpGet("api/states")]
+        [SwaggerOperation(
+            Summary = "List States",
+            Description = "List States",
+            OperationId = "states.List",
+            Tags = new[] { "StateEndpoints" })
+        ]
+        public override async Task<ActionResult<ListStateResponse>> HandleAsync([FromQuery] ListStateRequest request,
+          CancellationToken cancellationToken)
+        {
+            var response = new ListStateResponse(request.CorrelationId());
             try
             {
                 var spec = new StateGetListSpec();
                 var states = await _repository.ListAsync(spec, cancellationToken);
-                if (states == null || !states.Any()) 
+                if (states == null || !states.Any())
                 {
                     _logger.LogWarning("No states found.");
                     return NotFound();
@@ -60,7 +63,7 @@ namespace DDDInvoicingClean.Api.StateEndpoints
                 response.ErrorMessage = errorMsg;
                 return BadRequest(response);
             }
-      return Ok(response);
+            return Ok(response);
+        }
     }
-  }
 }

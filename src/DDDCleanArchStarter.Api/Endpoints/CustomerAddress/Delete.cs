@@ -1,26 +1,25 @@
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using AutoMapper;
 using BlazorMauiShared.Models.CustomerAddress;
+using DDDCleanArchStarter.Infrastructure.Services;
+using DDDInvoicingClean.Domain.Entities;
+using DDDInvoicingCleanL.SharedKernel.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using DDDInvoicingClean.Domain.Entities;
-using DDDInvoicingClean.Domain.ModelsDto;
-using DDDInvoicingClean.Domain.Specifications;
-using DDDCleanArchStarter.Infrastructure.Services;
-using DDDInvoicingCleanL.SharedKernel.Interfaces;
+
 namespace DDDInvoicingClean.Api.CustomerAddressEndpoints
 {
     public class Delete : EndpointBaseAsync.WithRequest<DeleteCustomerAddressRequest>.WithActionResult<
         DeleteCustomerAddressResponse>
     {
-        private readonly IAppLoggerService<Delete> _logger;
         private readonly IRepository<CustomerAddress> _customerAddressReadRepository;
+        private readonly IAppLoggerService<Delete> _logger;
         private readonly IMapper _mapper;
         private readonly IRepository<CustomerAddress> _repository;
+
         public Delete(IRepository<CustomerAddress> CustomerAddressRepository, IRepository<CustomerAddress> CustomerAddressReadRepository,
             IAppLoggerService<Delete> logger,
             IMapper mapper)
@@ -30,6 +29,7 @@ namespace DDDInvoicingClean.Api.CustomerAddressEndpoints
             _customerAddressReadRepository = CustomerAddressReadRepository;
             _mapper = mapper;
         }
+
         [HttpDelete("api/customerAddresses/{RowId}")]
         [SwaggerOperation(
             Summary = "Deletes an CustomerAddress",
@@ -44,10 +44,10 @@ namespace DDDInvoicingClean.Api.CustomerAddressEndpoints
             var customerAddress = await _customerAddressReadRepository.GetByIdAsync(request.RowId, cancellationToken);
             if (customerAddress == null)
             {
-                    var errorMsg = $"CustomerAddress with ID {request.RowId} not found.";
-                    _logger.LogWarning(errorMsg);
-                    response.ErrorMessage = errorMsg;
-                    return NotFound(response);
+                var errorMsg = $"CustomerAddress with ID {request.RowId} not found.";
+                _logger.LogWarning(errorMsg);
+                response.ErrorMessage = errorMsg;
+                return NotFound(response);
             }
             try
             {

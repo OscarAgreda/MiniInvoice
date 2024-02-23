@@ -1,26 +1,25 @@
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using AutoMapper;
 using BlazorMauiShared.Models.ProductCategory;
+using DDDCleanArchStarter.Infrastructure.Services;
+using DDDInvoicingClean.Domain.Entities;
+using DDDInvoicingCleanL.SharedKernel.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using DDDInvoicingClean.Domain.Entities;
-using DDDInvoicingClean.Domain.ModelsDto;
-using DDDInvoicingClean.Domain.Specifications;
-using DDDCleanArchStarter.Infrastructure.Services;
-using DDDInvoicingCleanL.SharedKernel.Interfaces;
+
 namespace DDDInvoicingClean.Api.ProductCategoryEndpoints
 {
     public class Delete : EndpointBaseAsync.WithRequest<DeleteProductCategoryRequest>.WithActionResult<
         DeleteProductCategoryResponse>
     {
         private readonly IAppLoggerService<Delete> _logger;
-        private readonly IRepository<ProductCategory> _productCategoryReadRepository;
         private readonly IMapper _mapper;
+        private readonly IRepository<ProductCategory> _productCategoryReadRepository;
         private readonly IRepository<ProductCategory> _repository;
+
         public Delete(IRepository<ProductCategory> ProductCategoryRepository, IRepository<ProductCategory> ProductCategoryReadRepository,
             IAppLoggerService<Delete> logger,
             IMapper mapper)
@@ -30,6 +29,7 @@ namespace DDDInvoicingClean.Api.ProductCategoryEndpoints
             _productCategoryReadRepository = ProductCategoryReadRepository;
             _mapper = mapper;
         }
+
         [HttpDelete("api/productCategories/{RowId}")]
         [SwaggerOperation(
             Summary = "Deletes an ProductCategory",
@@ -44,10 +44,10 @@ namespace DDDInvoicingClean.Api.ProductCategoryEndpoints
             var productCategory = await _productCategoryReadRepository.GetByIdAsync(request.RowId, cancellationToken);
             if (productCategory == null)
             {
-                    var errorMsg = $"ProductCategory with ID {request.RowId} not found.";
-                    _logger.LogWarning(errorMsg);
-                    response.ErrorMessage = errorMsg;
-                    return NotFound(response);
+                var errorMsg = $"ProductCategory with ID {request.RowId} not found.";
+                _logger.LogWarning(errorMsg);
+                response.ErrorMessage = errorMsg;
+                return NotFound(response);
             }
             try
             {

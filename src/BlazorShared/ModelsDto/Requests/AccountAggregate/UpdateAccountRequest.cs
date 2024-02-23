@@ -1,17 +1,19 @@
 using System;
 using BlazorShared.Models;
 using DDDInvoicingClean.Domain.ModelsDto;
+
 namespace BlazorMauiShared.Models.Account
 {
     public class UpdateAccountRequest : BaseRequest
     {
-      public Guid AccountId { get; set; }
-      public string AccountNumber { get; set; }
-      public string AccountName { get; set; }
-      public string AccountDescription { get; set; }
-      public bool? IsDeleted { get; set; }
-      public Guid TenantId { get; set; }
-      public Guid AccountTypeId { get; set; }
+        public string AccountDescription { get; set; }
+        public Guid AccountId { get; set; }
+        public string AccountName { get; set; }
+        public string AccountNumber { get; set; }
+        public Guid AccountTypeId { get; set; }
+        public bool? IsDeleted { get; set; }
+        public Guid TenantId { get; set; }
+
         public static UpdateAccountRequest FromDto(AccountDto accountDto)
         {
             return new UpdateAccountRequest

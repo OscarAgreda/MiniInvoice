@@ -1,19 +1,17 @@
 using System;
 using System.Globalization;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using AutoMapper;
 using BlazorMauiShared.Models.ProductCategory;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Swashbuckle.AspNetCore.Annotations;
+using DDDCleanArchStarter.Infrastructure.Services;
 using DDDInvoicingClean.Domain.Entities;
 using DDDInvoicingClean.Domain.ModelsDto;
-using DDDCleanArchStarter.Infrastructure.Services;
-using DDDInvoicingClean.Domain.Specifications;
 using DDDInvoicingCleanL.SharedKernel.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
+
 namespace DDDInvoicingClean.Api.ProductCategoryEndpoints
 {
     public class Create : EndpointBaseAsync.WithRequest<CreateProductCategoryRequest>.WithActionResult<
@@ -22,6 +20,7 @@ namespace DDDInvoicingClean.Api.ProductCategoryEndpoints
         private readonly IAppLoggerService<Create> _logger;
         private readonly IMapper _mapper;
         private readonly IRepository<ProductCategory> _repository;
+
         public Create(
             IRepository<ProductCategory> repository,
             IMapper mapper,
@@ -32,6 +31,7 @@ namespace DDDInvoicingClean.Api.ProductCategoryEndpoints
             _logger = logger;
             _repository = repository;
         }
+
         [HttpPost("api/productCategories")]
         [SwaggerOperation(
             Summary = "Creates a new ProductCategory",
@@ -54,7 +54,7 @@ namespace DDDInvoicingClean.Api.ProductCategoryEndpoints
                 var dto = _mapper.Map<ProductCategoryDto>(newProductCategory);
                 response.ProductCategory = dto;
             }
-            catch (Exception ex)  
+            catch (Exception ex)
             {
                 var errorMsg = $"Error while creating productCategory with Id {newProductCategory.RowId.ToString("D", CultureInfo.InvariantCulture)}";
                 _logger.LogError(ex, errorMsg);

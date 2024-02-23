@@ -1,26 +1,25 @@
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using AutoMapper;
 using BlazorMauiShared.Models.InvoiceDetail;
+using DDDCleanArchStarter.Infrastructure.Services;
+using DDDInvoicingClean.Domain.Entities;
+using DDDInvoicingCleanL.SharedKernel.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using DDDInvoicingClean.Domain.Entities;
-using DDDInvoicingClean.Domain.ModelsDto;
-using DDDInvoicingClean.Domain.Specifications;
-using DDDCleanArchStarter.Infrastructure.Services;
-using DDDInvoicingCleanL.SharedKernel.Interfaces;
+
 namespace DDDInvoicingClean.Api.InvoiceDetailEndpoints
 {
     public class Delete : EndpointBaseAsync.WithRequest<DeleteInvoiceDetailRequest>.WithActionResult<
         DeleteInvoiceDetailResponse>
     {
-        private readonly IAppLoggerService<Delete> _logger;
         private readonly IRepository<InvoiceDetail> _invoiceDetailReadRepository;
+        private readonly IAppLoggerService<Delete> _logger;
         private readonly IMapper _mapper;
         private readonly IRepository<InvoiceDetail> _repository;
+
         public Delete(IRepository<InvoiceDetail> InvoiceDetailRepository, IRepository<InvoiceDetail> InvoiceDetailReadRepository,
             IAppLoggerService<Delete> logger,
             IMapper mapper)
@@ -30,6 +29,7 @@ namespace DDDInvoicingClean.Api.InvoiceDetailEndpoints
             _invoiceDetailReadRepository = InvoiceDetailReadRepository;
             _mapper = mapper;
         }
+
         [HttpDelete("api/invoiceDetails/{InvoiceDetailId}")]
         [SwaggerOperation(
             Summary = "Deletes an InvoiceDetail",
@@ -44,10 +44,10 @@ namespace DDDInvoicingClean.Api.InvoiceDetailEndpoints
             var invoiceDetail = await _invoiceDetailReadRepository.GetByIdAsync(request.InvoiceDetailId, cancellationToken);
             if (invoiceDetail == null)
             {
-                    var errorMsg = $"InvoiceDetail with ID {request.InvoiceDetailId} not found.";
-                    _logger.LogWarning(errorMsg);
-                    response.ErrorMessage = errorMsg;
-                    return NotFound(response);
+                var errorMsg = $"InvoiceDetail with ID {request.InvoiceDetailId} not found.";
+                _logger.LogWarning(errorMsg);
+                response.ErrorMessage = errorMsg;
+                return NotFound(response);
             }
             try
             {

@@ -6,46 +6,49 @@ using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using AutoMapper;
 using BlazorMauiShared.Models.AccountAdjustment;
-using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
+using DDDCleanArchStarter.Infrastructure.Services;
 using DDDInvoicingClean.Domain.Entities;
 using DDDInvoicingClean.Domain.ModelsDto;
 using DDDInvoicingClean.Domain.Specifications;
-using DDDCleanArchStarter.Infrastructure.Services;
 using DDDInvoicingCleanL.SharedKernel.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
+
 namespace DDDInvoicingClean.Api.AccountAdjustmentEndpoints
 {
-  public class List : EndpointBaseAsync
-    .WithRequest<ListAccountAdjustmentRequest>
-    .WithActionResult<ListAccountAdjustmentResponse>
-  {
-    private readonly IRepository<AccountAdjustment> _repository;
-    private readonly IMapper _mapper;
+    public class List : EndpointBaseAsync
+      .WithRequest<ListAccountAdjustmentRequest>
+      .WithActionResult<ListAccountAdjustmentResponse>
+    {
         private readonly IAppLoggerService<List> _logger;
-    public List(IRepository<AccountAdjustment> repository,
+        private readonly IMapper _mapper;
+        private readonly IRepository<AccountAdjustment> _repository;
+
+        public List(IRepository<AccountAdjustment> repository,
       IAppLoggerService<List> logger,
       IMapper mapper)
-    {
-      _repository = repository;
-      _mapper = mapper;
-      _logger = logger;
-    }
-    [HttpGet("api/accountAdjustments")]
-    [SwaggerOperation(
-        Summary = "List AccountAdjustments",
-        Description = "List AccountAdjustments",
-        OperationId = "accountAdjustments.List",
-        Tags = new[] { "AccountAdjustmentEndpoints" })
-    ]
-    public override async Task<ActionResult<ListAccountAdjustmentResponse>> HandleAsync([FromQuery] ListAccountAdjustmentRequest request,
-      CancellationToken cancellationToken)
-    {
-      var response = new ListAccountAdjustmentResponse(request.CorrelationId());
+        {
+            _repository = repository;
+            _mapper = mapper;
+            _logger = logger;
+        }
+
+        [HttpGet("api/accountAdjustments")]
+        [SwaggerOperation(
+            Summary = "List AccountAdjustments",
+            Description = "List AccountAdjustments",
+            OperationId = "accountAdjustments.List",
+            Tags = new[] { "AccountAdjustmentEndpoints" })
+        ]
+        public override async Task<ActionResult<ListAccountAdjustmentResponse>> HandleAsync([FromQuery] ListAccountAdjustmentRequest request,
+          CancellationToken cancellationToken)
+        {
+            var response = new ListAccountAdjustmentResponse(request.CorrelationId());
             try
             {
                 var spec = new AccountAdjustmentGetListSpec();
                 var accountAdjustments = await _repository.ListAsync(spec, cancellationToken);
-                if (accountAdjustments == null || !accountAdjustments.Any()) 
+                if (accountAdjustments == null || !accountAdjustments.Any())
                 {
                     _logger.LogWarning("No accountAdjustments found.");
                     return NotFound();
@@ -60,7 +63,7 @@ namespace DDDInvoicingClean.Api.AccountAdjustmentEndpoints
                 response.ErrorMessage = errorMsg;
                 return BadRequest(response);
             }
-      return Ok(response);
+            return Ok(response);
+        }
     }
-  }
 }

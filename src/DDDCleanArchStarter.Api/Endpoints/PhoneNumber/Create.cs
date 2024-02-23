@@ -1,19 +1,17 @@
 using System;
 using System.Globalization;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using AutoMapper;
 using BlazorMauiShared.Models.PhoneNumber;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Swashbuckle.AspNetCore.Annotations;
+using DDDCleanArchStarter.Infrastructure.Services;
 using DDDInvoicingClean.Domain.Entities;
 using DDDInvoicingClean.Domain.ModelsDto;
-using DDDCleanArchStarter.Infrastructure.Services;
-using DDDInvoicingClean.Domain.Specifications;
 using DDDInvoicingCleanL.SharedKernel.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
+
 namespace DDDInvoicingClean.Api.PhoneNumberEndpoints
 {
     public class Create : EndpointBaseAsync.WithRequest<CreatePhoneNumberRequest>.WithActionResult<
@@ -22,6 +20,7 @@ namespace DDDInvoicingClean.Api.PhoneNumberEndpoints
         private readonly IAppLoggerService<Create> _logger;
         private readonly IMapper _mapper;
         private readonly IRepository<PhoneNumber> _repository;
+
         public Create(
             IRepository<PhoneNumber> repository,
             IMapper mapper,
@@ -32,6 +31,7 @@ namespace DDDInvoicingClean.Api.PhoneNumberEndpoints
             _logger = logger;
             _repository = repository;
         }
+
         [HttpPost("api/phoneNumbers")]
         [SwaggerOperation(
             Summary = "Creates a new PhoneNumber",
@@ -54,7 +54,7 @@ namespace DDDInvoicingClean.Api.PhoneNumberEndpoints
                 var dto = _mapper.Map<PhoneNumberDto>(newPhoneNumber);
                 response.PhoneNumber = dto;
             }
-            catch (Exception ex)  
+            catch (Exception ex)
             {
                 var errorMsg = $"Error while creating phoneNumber with Id {newPhoneNumber.PhoneNumberId.ToString("D", CultureInfo.InvariantCulture)}";
                 _logger.LogError(ex, errorMsg);

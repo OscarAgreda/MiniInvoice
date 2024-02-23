@@ -1,41 +1,42 @@
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using AutoMapper;
 using BlazorMauiShared.Models.Country;
+using DDDCleanArchStarter.Infrastructure.Services;
+using DDDInvoicingClean.Domain.Entities;
+using DDDInvoicingClean.Domain.Specifications;
+using DDDInvoicingCleanL.SharedKernel.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using DDDInvoicingClean.Domain.Entities;
-using DDDInvoicingClean.Domain.ModelsDto;
-using DDDInvoicingClean.Domain.Specifications;
-using DDDCleanArchStarter.Infrastructure.Services;
-using DDDInvoicingCleanL.SharedKernel.Interfaces;
+
 namespace DDDInvoicingClean.Api.CountryEndpoints
 {
     public class Delete : EndpointBaseAsync.WithRequest<DeleteCountryRequest>.WithActionResult<
         DeleteCountryResponse>
     {
-        private readonly IAppLoggerService<Delete> _logger;
-        private readonly IRepository<Country> _countryReadRepository;
         private readonly IRepository<Address> _addressRepository;
-        private readonly IRepository<State> _stateRepository;
+        private readonly IRepository<Country> _countryReadRepository;
+        private readonly IAppLoggerService<Delete> _logger;
         private readonly IMapper _mapper;
         private readonly IRepository<Country> _repository;
+        private readonly IRepository<State> _stateRepository;
+
         public Delete(IRepository<Country> CountryRepository, IRepository<Country> CountryReadRepository,
             IAppLoggerService<Delete> logger,
-		       IRepository<Address> addressRepository,
-		       IRepository<State> stateRepository,
+               IRepository<Address> addressRepository,
+               IRepository<State> stateRepository,
             IMapper mapper)
         {
             _repository = CountryRepository;
             _logger = logger;
             _countryReadRepository = CountryReadRepository;
-			    _addressRepository = addressRepository;
-			    _stateRepository = stateRepository;
+            _addressRepository = addressRepository;
+            _stateRepository = stateRepository;
             _mapper = mapper;
         }
+
         [HttpDelete("api/countries/{CountryId}")]
         [SwaggerOperation(
             Summary = "Deletes an Country",
@@ -50,10 +51,10 @@ namespace DDDInvoicingClean.Api.CountryEndpoints
             var country = await _countryReadRepository.GetByIdAsync(request.CountryId, cancellationToken);
             if (country == null)
             {
-                    var errorMsg = $"Country with ID {request.CountryId} not found.";
-                    _logger.LogWarning(errorMsg);
-                    response.ErrorMessage = errorMsg;
-                    return NotFound(response);
+                var errorMsg = $"Country with ID {request.CountryId} not found.";
+                _logger.LogWarning(errorMsg);
+                response.ErrorMessage = errorMsg;
+                return NotFound(response);
             }
             var addressSpec = new GetAddressWithCountryKeySpec(country.CountryId);
             var addresses = await _addressRepository.ListAsync(addressSpec);

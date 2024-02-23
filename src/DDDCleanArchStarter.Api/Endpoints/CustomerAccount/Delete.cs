@@ -1,26 +1,25 @@
 using System;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using AutoMapper;
 using BlazorMauiShared.Models.CustomerAccount;
+using DDDCleanArchStarter.Infrastructure.Services;
+using DDDInvoicingClean.Domain.Entities;
+using DDDInvoicingCleanL.SharedKernel.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using DDDInvoicingClean.Domain.Entities;
-using DDDInvoicingClean.Domain.ModelsDto;
-using DDDInvoicingClean.Domain.Specifications;
-using DDDCleanArchStarter.Infrastructure.Services;
-using DDDInvoicingCleanL.SharedKernel.Interfaces;
+
 namespace DDDInvoicingClean.Api.CustomerAccountEndpoints
 {
     public class Delete : EndpointBaseAsync.WithRequest<DeleteCustomerAccountRequest>.WithActionResult<
         DeleteCustomerAccountResponse>
     {
-        private readonly IAppLoggerService<Delete> _logger;
         private readonly IRepository<CustomerAccount> _customerAccountReadRepository;
+        private readonly IAppLoggerService<Delete> _logger;
         private readonly IMapper _mapper;
         private readonly IRepository<CustomerAccount> _repository;
+
         public Delete(IRepository<CustomerAccount> CustomerAccountRepository, IRepository<CustomerAccount> CustomerAccountReadRepository,
             IAppLoggerService<Delete> logger,
             IMapper mapper)
@@ -30,6 +29,7 @@ namespace DDDInvoicingClean.Api.CustomerAccountEndpoints
             _customerAccountReadRepository = CustomerAccountReadRepository;
             _mapper = mapper;
         }
+
         [HttpDelete("api/customerAccounts/{RowId}")]
         [SwaggerOperation(
             Summary = "Deletes an CustomerAccount",
@@ -44,10 +44,10 @@ namespace DDDInvoicingClean.Api.CustomerAccountEndpoints
             var customerAccount = await _customerAccountReadRepository.GetByIdAsync(request.RowId, cancellationToken);
             if (customerAccount == null)
             {
-                    var errorMsg = $"CustomerAccount with ID {request.RowId} not found.";
-                    _logger.LogWarning(errorMsg);
-                    response.ErrorMessage = errorMsg;
-                    return NotFound(response);
+                var errorMsg = $"CustomerAccount with ID {request.RowId} not found.";
+                _logger.LogWarning(errorMsg);
+                response.ErrorMessage = errorMsg;
+                return NotFound(response);
             }
             try
             {

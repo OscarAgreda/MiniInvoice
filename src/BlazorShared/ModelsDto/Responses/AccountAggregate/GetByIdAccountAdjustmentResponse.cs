@@ -1,6 +1,7 @@
 using System;
 using BlazorShared.Models;
 using DDDInvoicingClean.Domain.ModelsDto;
+
 namespace BlazorMauiShared.Models.AccountAdjustment
 {
     public class GetByIdAccountAdjustmentResponse : BaseResponse
@@ -9,9 +10,11 @@ namespace BlazorMauiShared.Models.AccountAdjustment
             : base(correlationId)
         {
         }
+
         public GetByIdAccountAdjustmentResponse()
         {
         }
+
         public AccountAdjustmentDto AccountAdjustment { get; set; } = new();
     }
 }

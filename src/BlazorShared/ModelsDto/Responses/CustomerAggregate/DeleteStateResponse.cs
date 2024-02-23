@@ -1,6 +1,7 @@
 using System;
 using BlazorShared.Models;
 using DDDInvoicingClean.Domain.ModelsDto;
+
 namespace BlazorMauiShared.Models.State
 {
     public class DeleteStateResponse : BaseResponse
@@ -9,6 +10,7 @@ namespace BlazorMauiShared.Models.State
             : base(correlationId)
         {
         }
+
         public DeleteStateResponse()
         {
         }

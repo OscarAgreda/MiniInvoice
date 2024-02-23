@@ -1,19 +1,17 @@
 using System;
 using System.Globalization;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using AutoMapper;
 using BlazorMauiShared.Models.InvoiceDetail;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
-using Swashbuckle.AspNetCore.Annotations;
+using DDDCleanArchStarter.Infrastructure.Services;
 using DDDInvoicingClean.Domain.Entities;
 using DDDInvoicingClean.Domain.ModelsDto;
-using DDDCleanArchStarter.Infrastructure.Services;
-using DDDInvoicingClean.Domain.Specifications;
 using DDDInvoicingCleanL.SharedKernel.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
+
 namespace DDDInvoicingClean.Api.InvoiceDetailEndpoints
 {
     public class Create : EndpointBaseAsync.WithRequest<CreateInvoiceDetailRequest>.WithActionResult<
@@ -22,6 +20,7 @@ namespace DDDInvoicingClean.Api.InvoiceDetailEndpoints
         private readonly IAppLoggerService<Create> _logger;
         private readonly IMapper _mapper;
         private readonly IRepository<InvoiceDetail> _repository;
+
         public Create(
             IRepository<InvoiceDetail> repository,
             IMapper mapper,
@@ -32,6 +31,7 @@ namespace DDDInvoicingClean.Api.InvoiceDetailEndpoints
             _logger = logger;
             _repository = repository;
         }
+
         [HttpPost("api/invoiceDetails")]
         [SwaggerOperation(
             Summary = "Creates a new InvoiceDetail",
@@ -62,7 +62,7 @@ namespace DDDInvoicingClean.Api.InvoiceDetailEndpoints
                 var dto = _mapper.Map<InvoiceDetailDto>(newInvoiceDetail);
                 response.InvoiceDetail = dto;
             }
-            catch (Exception ex)  
+            catch (Exception ex)
             {
                 var errorMsg = $"Error while creating invoiceDetail with Id {newInvoiceDetail.InvoiceDetailId.ToString("D", CultureInfo.InvariantCulture)}";
                 _logger.LogError(ex, errorMsg);

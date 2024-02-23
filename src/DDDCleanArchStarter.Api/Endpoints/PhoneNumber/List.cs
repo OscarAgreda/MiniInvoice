@@ -6,46 +6,49 @@ using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using AutoMapper;
 using BlazorMauiShared.Models.PhoneNumber;
-using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
+using DDDCleanArchStarter.Infrastructure.Services;
 using DDDInvoicingClean.Domain.Entities;
 using DDDInvoicingClean.Domain.ModelsDto;
 using DDDInvoicingClean.Domain.Specifications;
-using DDDCleanArchStarter.Infrastructure.Services;
 using DDDInvoicingCleanL.SharedKernel.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
+
 namespace DDDInvoicingClean.Api.PhoneNumberEndpoints
 {
-  public class List : EndpointBaseAsync
-    .WithRequest<ListPhoneNumberRequest>
-    .WithActionResult<ListPhoneNumberResponse>
-  {
-    private readonly IRepository<PhoneNumber> _repository;
-    private readonly IMapper _mapper;
+    public class List : EndpointBaseAsync
+      .WithRequest<ListPhoneNumberRequest>
+      .WithActionResult<ListPhoneNumberResponse>
+    {
         private readonly IAppLoggerService<List> _logger;
-    public List(IRepository<PhoneNumber> repository,
+        private readonly IMapper _mapper;
+        private readonly IRepository<PhoneNumber> _repository;
+
+        public List(IRepository<PhoneNumber> repository,
       IAppLoggerService<List> logger,
       IMapper mapper)
-    {
-      _repository = repository;
-      _mapper = mapper;
-      _logger = logger;
-    }
-    [HttpGet("api/phoneNumbers")]
-    [SwaggerOperation(
-        Summary = "List PhoneNumbers",
-        Description = "List PhoneNumbers",
-        OperationId = "phoneNumbers.List",
-        Tags = new[] { "PhoneNumberEndpoints" })
-    ]
-    public override async Task<ActionResult<ListPhoneNumberResponse>> HandleAsync([FromQuery] ListPhoneNumberRequest request,
-      CancellationToken cancellationToken)
-    {
-      var response = new ListPhoneNumberResponse(request.CorrelationId());
+        {
+            _repository = repository;
+            _mapper = mapper;
+            _logger = logger;
+        }
+
+        [HttpGet("api/phoneNumbers")]
+        [SwaggerOperation(
+            Summary = "List PhoneNumbers",
+            Description = "List PhoneNumbers",
+            OperationId = "phoneNumbers.List",
+            Tags = new[] { "PhoneNumberEndpoints" })
+        ]
+        public override async Task<ActionResult<ListPhoneNumberResponse>> HandleAsync([FromQuery] ListPhoneNumberRequest request,
+          CancellationToken cancellationToken)
+        {
+            var response = new ListPhoneNumberResponse(request.CorrelationId());
             try
             {
                 var spec = new PhoneNumberGetListSpec();
                 var phoneNumbers = await _repository.ListAsync(spec, cancellationToken);
-                if (phoneNumbers == null || !phoneNumbers.Any()) 
+                if (phoneNumbers == null || !phoneNumbers.Any())
                 {
                     _logger.LogWarning("No phoneNumbers found.");
                     return NotFound();
@@ -60,7 +63,7 @@ namespace DDDInvoicingClean.Api.PhoneNumberEndpoints
                 response.ErrorMessage = errorMsg;
                 return BadRequest(response);
             }
-      return Ok(response);
+            return Ok(response);
+        }
     }
-  }
 }

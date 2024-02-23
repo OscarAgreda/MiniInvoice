@@ -1,6 +1,7 @@
 using System;
 using BlazorShared.Models;
 using DDDInvoicingClean.Domain.ModelsDto;
+
 namespace BlazorMauiShared.Models.ProductCategory
 {
     public class GetByIdProductCategoryResponse : BaseResponse
@@ -9,9 +10,11 @@ namespace BlazorMauiShared.Models.ProductCategory
             : base(correlationId)
         {
         }
+
         public GetByIdProductCategoryResponse()
         {
         }
+
         public ProductCategoryDto ProductCategory { get; set; } = new();
     }
 }

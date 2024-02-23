@@ -6,46 +6,49 @@ using System.Threading.Tasks;
 using Ardalis.ApiEndpoints;
 using AutoMapper;
 using BlazorMauiShared.Models.Customer;
-using Microsoft.AspNetCore.Mvc;
-using Swashbuckle.AspNetCore.Annotations;
+using DDDCleanArchStarter.Infrastructure.Services;
 using DDDInvoicingClean.Domain.Entities;
 using DDDInvoicingClean.Domain.ModelsDto;
 using DDDInvoicingClean.Domain.Specifications;
-using DDDCleanArchStarter.Infrastructure.Services;
 using DDDInvoicingCleanL.SharedKernel.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Swashbuckle.AspNetCore.Annotations;
+
 namespace DDDInvoicingClean.Api.CustomerEndpoints
 {
-  public class List : EndpointBaseAsync
-    .WithRequest<ListCustomerRequest>
-    .WithActionResult<ListCustomerResponse>
-  {
-    private readonly IRepository<Customer> _repository;
-    private readonly IMapper _mapper;
+    public class List : EndpointBaseAsync
+      .WithRequest<ListCustomerRequest>
+      .WithActionResult<ListCustomerResponse>
+    {
         private readonly IAppLoggerService<List> _logger;
-    public List(IRepository<Customer> repository,
+        private readonly IMapper _mapper;
+        private readonly IRepository<Customer> _repository;
+
+        public List(IRepository<Customer> repository,
       IAppLoggerService<List> logger,
       IMapper mapper)
-    {
-      _repository = repository;
-      _mapper = mapper;
-      _logger = logger;
-    }
-    [HttpGet("api/customers")]
-    [SwaggerOperation(
-        Summary = "List Customers",
-        Description = "List Customers",
-        OperationId = "customers.List",
-        Tags = new[] { "CustomerEndpoints" })
-    ]
-    public override async Task<ActionResult<ListCustomerResponse>> HandleAsync([FromQuery] ListCustomerRequest request,
-      CancellationToken cancellationToken)
-    {
-      var response = new ListCustomerResponse(request.CorrelationId());
+        {
+            _repository = repository;
+            _mapper = mapper;
+            _logger = logger;
+        }
+
+        [HttpGet("api/customers")]
+        [SwaggerOperation(
+            Summary = "List Customers",
+            Description = "List Customers",
+            OperationId = "customers.List",
+            Tags = new[] { "CustomerEndpoints" })
+        ]
+        public override async Task<ActionResult<ListCustomerResponse>> HandleAsync([FromQuery] ListCustomerRequest request,
+          CancellationToken cancellationToken)
+        {
+            var response = new ListCustomerResponse(request.CorrelationId());
             try
             {
                 var spec = new CustomerGetListSpec();
                 var customers = await _repository.ListAsync(spec, cancellationToken);
-                if (customers == null || !customers.Any()) 
+                if (customers == null || !customers.Any())
                 {
                     _logger.LogWarning("No customers found.");
                     return NotFound();
@@ -60,7 +63,7 @@ namespace DDDInvoicingClean.Api.CustomerEndpoints
                 response.ErrorMessage = errorMsg;
                 return BadRequest(response);
             }
-      return Ok(response);
+            return Ok(response);
+        }
     }
-  }
 }
