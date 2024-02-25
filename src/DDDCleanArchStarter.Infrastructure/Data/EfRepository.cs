@@ -41,5 +41,10 @@ namespace DDDCleanArchStarter.Infrastructure.Data
                 _transaction?.Dispose();
             }
         }
+
+        public void DetachEntity(T entity)
+        {
+            _dbContext.Entry(entity).State = EntityState.Detached;
+        }
     }
 }

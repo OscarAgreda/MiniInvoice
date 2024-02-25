@@ -6,6 +6,8 @@ namespace DDDInvoicingCleanL.SharedKernel.Interfaces
         public void BeginTransaction();
         public void CommitTransaction();
         public void RollbackTransaction();
+
+        void DetachEntity(T entity); // Add this line
     }
 
     public interface IEntityFactory<T>

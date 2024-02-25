@@ -16,6 +16,7 @@ using DDDInvoicingClean.Domain.Specifications;
 using DDDInvoicingCleanL.SharedKernel.Interfaces;
 using LanguageExt;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
 using Swashbuckle.AspNetCore.Annotations;
 using static LanguageExt.Prelude;
@@ -163,6 +164,11 @@ namespace DDDCleanArchStarter.Api.Strategies
             try
             {
                 Product newProduct = _productFactory.Create(context.ProductRequest);
+
+
+
+                 _productRepository.DetachEntity(newProduct);
+
                 _ = await _productRepository.AddAsync(newProduct, cancellationToken);
                 return Right<Exception, Unit>(Unit.Default);
             }
@@ -805,8 +811,6 @@ namespace DDDCleanArchStarter.Api.Strategies
 
         public Product Build()
         {
-            // The builders are responsible for constructing the object, and Factories are for abstracting the creation logic. While both might have validation logic, their responsibilities are different.
-            // The Factory is responsible for object creation, and the Builder is responsible for object construction. Ideally, each should validate its own parameters to adhere to SRP.
             _ = Guard.Against.NullOrEmpty(productId, nameof(productId));
             _ = Guard.Against.NullOrWhiteSpace(productName, nameof(productName));
             _ = Guard.Against.Negative(productUnitPrice, nameof(productUnitPrice));
@@ -902,6 +906,8 @@ namespace DDDCleanArchStarter.Api.Strategies
         public Product Create(params object[] args)
         {
             CreateProductRequest request = (CreateProductRequest)args[0];
+
+
             return new ProductEntityBuilder()
             .WithProductId(Guid.NewGuid())
             .WithProductName(request.ProductName)
@@ -1087,7 +1093,49 @@ namespace DDDCleanArchStarter.Api.Strategies
             _registrationInvoiceDataStrategy = registrationInvoiceDataStrategy;
         }
 
-        [HttpPut("api/invoiceStrategyDataRegistration")]
+        //{
+        //    "createInvoiceDetailRequest": {
+        //        "invoiceId": "C6BBF1A4-8C77-C2EF-C46B-A30CEE183C7C",
+        //        "lineDiscount": 8672824520000000.00,
+        //        "lineSale": 9182663140000000.00,
+        //        "lineTax": 3051540360000000.00,
+        //        "productId": "25A31255-EBFB-BD69-F5AE-5B93938D0711",
+        //        "productName": "Thrupeban",
+        //        "quantity": 9958186310000000.00,
+        //        "tenantId": "0330AE03-B21B-9F5D-96DB-E303C705CFBB",
+        //        "unitPrice": 1269484760000000.00
+        //    },
+        //    "createInvoiceRequest": {
+        //        "accountId": "0469F040-AEA1-D804-8293-159D2335DC2E",
+        //        "accountName": "YIQ295",
+        //        "customerName": "Lakisha",
+        //        "internalComments": "Et pladior Tam non vantis. pladior quoque imaginator plorum vobis linguens estis novum delerium. in linguens quorum",
+        //        "invoicedDate": "2012-04-03T07:48:48.734Z",
+        //        "invoiceNumber": -157475370,
+        //        "invoicingNote": "Versus funem. plurissimum essit. estum. gravis si linguens et plorum quantare travissimantor et essit.",
+        //        "paymentState": -1322087220,
+        //        "tenantId": "0330AE03-B21B-9F5D-96DB-E303C705CFBB",
+        //        "totalSale": 5754133760000000.00,
+        //        "totalSaleTax": 4786005280000000.00
+        //    },
+        //    "createProductRequest": {
+        //        "isDeleted": false,
+        //        "productChargeRateCallPerSecond": 1463905180000000.00,
+        //        "productChargeRatePerCharacter": 9381898480000000.00,
+        //        "productDescription": "gravum quad vantis. manifestum linguens manifestum et fecit. quis quad quo vobis non quartu et linguens",
+        //        "productIsActive": true,
+        //        "productMinimumCallMinutes": -767517025,
+        //        "productMinimumCharacters": -2076411099,
+        //        "productName": "Thrupeban",
+        //        "productUnitPrice": 1053871680000000.00,
+        //        "tenantId": "0330AE03-B21B-9F5D-96DB-E303C705CFBB"
+        //    },
+        //    "invoiceId": "2CC08D50-36F0-D5E5-F6A6-841946C317B3"
+        //}
+
+
+
+    [HttpPut("api/invoiceStrategyDataRegistration")]
         [SwaggerOperation(
             Summary = "Updates a invoiceStrategyDataRegistration",
             Description = "Updates a invoiceStrategyDataRegistration",

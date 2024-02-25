@@ -6,6 +6,7 @@ using System.Text.Json.Serialization;
 using Autofac;
 using BlazorShared;
 using Confluent.Kafka;
+using DDDCleanArchStarter.Api.Strategies.Di;
 using DDDCleanArchStarter.Domain.Interfaces;
 using DDDCleanArchStarter.Infrastructure;
 using DDDCleanArchStarter.Infrastructure.Data;
@@ -105,8 +106,12 @@ namespace DDDCleanArchStarter.Api
         }
         public void ConfigureContainer(ContainerBuilder builder)
         {
+            var connectionString = Configuration.GetConnectionString("DefaultConnection");
             var isDevelopment = _env.EnvironmentName == "Development";
-            builder.RegisterModule(new DefaultInfrastructureModule(isDevelopment, Assembly.GetExecutingAssembly()));
+            builder.RegisterModule(new DefaultInfrastructureModule(connectionString,isDevelopment, Assembly.GetExecutingAssembly()));
+
+            builder.RegisterModule(new UpdateRegistrationInvoiceDataStrategy());
+
         }
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
